@@ -1,0 +1,11 @@
+*
+!.gitignore
+!start-campus-match.ps1
+!start-campus-match.bat
+!开发文档.md
+!campus-match-frontend/
+!campus-match-frontend/**
+!campus-match-backend/
+!campus-match-backend/**
+!campus-match-admin/
+!campus-match-admin/**

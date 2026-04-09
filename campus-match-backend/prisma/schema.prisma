@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model School {
+  id         Int               @id @default(autoincrement())
+  name       String
+  code       String            @unique
+  users      User[]
+  emailRules SchoolEmailRule[]
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+}
+
+model SchoolEmailRule {
+  id          Int      @id @default(autoincrement())
+  schoolId    Int
+  emailSuffix String
+  isActive    Boolean  @default(true)
+  school      School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([schoolId, emailSuffix])
+}
+
+model User {
+  id            Int                     @id @default(autoincrement())
+  schoolId      Int
+  email         String                  @unique
+  phone         String                  @unique
+  password      String
+  registeredAt  DateTime                @default(now())
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+  school        School                  @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  profile       UserProfile?
+  questionnaire QuestionnaireSubmission?
+  preference    UserPreference?
+}
+
+model UserProfile {
+  id                Int      @id @default(autoincrement())
+  userId            Int      @unique
+  nickname          String
+  avatarUrl         String
+  age               Int
+  gender            String
+  sexualOrientation String
+  monthlySpending   Int
+  bio               String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model QuestionnaireSubmission {
+  id         Int      @id @default(autoincrement())
+  userId      Int      @unique
+  versionCode String
+  answersJson String
+  tagsJson    String
+  traitsJson  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserPreference {
+  id                    Int      @id @default(autoincrement())
+  userId                Int      @unique
+  preferredGendersJson  String
+  ageMin                Int
+  ageMax                Int
+  relationshipGoal      String
+  intimacyPreference    String
+  valuePriority         String
+  emotionalStyle        String
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
